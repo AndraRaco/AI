@@ -1,3 +1,4 @@
+# 232 Racovita Andra-Georgiana
 
 """ Problema canibalilor si misionarilor """
 
@@ -175,14 +176,14 @@ def in_lista(l, nod):
 
 def a_star():
     """
-            Functia care implementeaza algoritmul A-star
+        Functia care implementeaza algoritmul A-star
     """
-    # TO DO ... DONE
+
+    nod_curent = None
 
     rad_arbore = NodParcurgere(NodParcurgere.problema.nod_start)
     open = [rad_arbore]  # open va contine elemente de tip NodParcurgere
     closed = []  # closed va contine elemente de tip NodParcurgere
-    nod_nou = None
 
     while len(open) > 0:
         print(str_info_noduri(open))  # afisam lista open
@@ -198,7 +199,9 @@ def a_star():
             # "nod_curent" este tatal, "nod_succesor" este fiul curent
 
             # daca fiul nu e in drumul dintre radacina si tatal sau (adica nu se creeaza un circuit)
-            if (not nod_curent.contine_in_drum(nod_succesor)):
+            if not nod_curent.contine_in_drum(nod_succesor):
+
+                nod_nou = None
 
                 # calculez valorile g si f pentru "nod_succesor" (fiul)
                 # g-ul tatalui + cost muchie(tata, fiu)
@@ -210,11 +213,11 @@ def a_star():
                 nod_parcg_vechi = in_lista(closed, nod_succesor)
 
                 if nod_parcg_vechi is not None:  # "nod_succesor" e in closed
-                    # daca f-ul calculat pentru drumul actual este mai bun (mai mic) decat
-                    # 	   f-ul pentru drumul gasit anterior (f-ul nodului aflat in lista closed)
+                    # daca g-ul calculat pentru drumul actual este mai bun (mai mic) decat
+                    #        g-ul pentru drumul gasit anterior (g-ul nodului aflat in lista closed)
                     # atunci actualizez parintele, g si f
                     # si apoi voi adauga "nod_nou" in lista open
-                    if (f_succesor < nod_parcg_vechi.f):
+                    if g_succesor < nod_parcg_vechi.g:
                         # scot nodul din lista closed
                         closed.remove(nod_parcg_vechi)
                         nod_parcg_vechi.parinte = nod_curent  # actualizez parintele
@@ -228,16 +231,17 @@ def a_star():
 
                     if nod_parcg_vechi is not None:  # "nod_succesor" e in open
                         # daca f-ul calculat pentru drumul actual este mai bun (mai mic) decat
-                        # 	   f-ul pentru drumul gasit anterior (f-ul nodului aflat in lista open)
+                        #        f-ul pentru drumul gasit anterior (f-ul nodului aflat in lista open)
                         # atunci scot nodul din lista open
-                        # 		(pentru ca modificarea valorilor f si g imi va strica sortarea listei open)
+                        #         (pentru ca modificarea valorilor f si g imi va strica sortarea listei open)
                         # actualizez parintele, g si f
                         # si apoi voi adauga "nod_nou" in lista open (la noua pozitie corecta in sortare)
-                        open.remove(nod_parcg_vechi)
-                        nod_parcg_vechi.parinte = nod_curent
-                        nod_parcg_vechi.g = g_succesor
-                        nod_parcg_vechi.f = f_succesor
-                        nod_nou = nod_parcg_vechi
+                        if f_succesor < nod_parcg_vechi.f:
+                            open.remove(nod_parcg_vechi)
+                            nod_parcg_vechi.parinte = nod_curent
+                            nod_parcg_vechi.g = g_succesor
+                            nod_parcg_vechi.f = f_succesor
+                            nod_nou = nod_parcg_vechi
 
                     else:  # cand "nod_succesor" nu e nici in closed, nici in open
                         nod_nou = NodParcurgere(
