@@ -229,8 +229,8 @@ def str_info_noduri(l):
     """
     sir = "["
     for x in l:
-        sir += str(x) + "  "
-    sir += "]"
+        sir += str(x) + "\n"
+    sir += "]\n"
     return sir
 
 
