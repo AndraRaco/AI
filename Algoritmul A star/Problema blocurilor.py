@@ -1,34 +1,44 @@
+# 232 Racovita Andra-Georgiana
 
-"Problema blocurilor"
+""" 8-puzzle """
+
+import copy
 
 
-class Configuratie:
-    def __init__(self, stive):
-        self.stive = stive
+class Configuratie:  # Constructor de copiere pentru matrice
+    def __init__(self, matrice):
+        self.matrice = matrice
+
+    def copy_constructor(self, other):
+        for i in range(n):
+            for j in range(n):
+                self.matrice[i][j] = other.matrice[i][j]
 
     def __repr__(self):
-        return f"{self.stive}"
+        return f"{self.matrice}"
 
     def __eq__(self, other):
-        return self.stive == other.stive
+        return self.matrice == other.matrice
 
     def pozitionare(self):
-        # Dictionar in care retinem (i,j), litera cub se afla pe stiva i pozitia j
-        poz = {}
-        for i, turn in enumerate(self.stive):
-            for j, cub in enumerate(turn):
-                poz[cub] = (i, j)
+        poz = {}  # Dictionar in care retinem pozitiile fiecarui numar
+        # retinem perechi (i,j)
+        for i in range(n):  # Matricea e 3x3
+            for j in range(n):
+                poz[self.matrice[i][j]] = (i, j)
         return poz
 
     def euristica(self):
         global poz_scop  # Dictionar cu configuratia la care trebuie sa ajungem
-        distanta = 0
-        poz = self.pozitionare()  # pozitiile cuburilor din configuratie
+        distanta = 0  # Folosim distanta Manhattan
+        # abs(x1- x2) + abs(y1 – y2)
+        poz = self.pozitionare()  # pozitia placutelor din configuratie
 
-        # Parcurgem cub-urile
-        for cub in cuburi:
-            if poz[cub] != poz_scop[cub]:
-                distanta += 1
+        # Parcurgem placutele
+        for numar in numere:
+            if poz[numar] != poz_scop[numar]:
+                distanta += abs(poz[numar][0]-poz_scop[numar][0]) + \
+                    abs(poz[numar][1] - poz_scop[numar][1])
         return distanta
 
 
@@ -45,10 +55,10 @@ class Nod:
 
 
 class Arc:
-    def __init__(self, capat, varf):
+    def __init__(self, capat, varf, cost):
         self.capat = capat
         self.varf = varf
-        self.cost = 1  # Toate mutarile au costul 1
+        self.cost = cost
 
 
 class Problema:
@@ -129,48 +139,78 @@ class NodParcurgere:
     def expandeaza(self):
         """Pentru nodul curent (self) parinte, trebuie sa gasiti toti succesorii (fiii)
         si sa returnati o lista de tupluri (nod_fiu, cost_muchie_tata_fiu),
-        sau lista vida, daca nu exista niciunul.
-        (Fiecare tuplu contine un obiect de tip Nod si un numar.)
+        sau lista vida, daca nu exista niciunul.(Fiecare tuplu contine un obiect d
+        e tip Nod si un numar.)
         """
         # TO DO ... DONE
-        configuratie = self.nod_graf.info  # stiva de stive
-        succ = []
-        for ind_stiva_curenta in range(nr_stive):
-            for ind_stiva_destinatie in range(nr_stive):
-                if ind_stiva_curenta == ind_stiva_destinatie:
-                    continue  # Nu mutam un cub pe aceeasi stiva
+        configuratie = self.nod_graf.info  # Configuratie
+        succ = []  # Trebuie sa fac constructor de copieere ceva
 
-                # Daca e stiva vida, nu facem mutari, nu avem ce muta
-                if not configuratie.stive[ind_stiva_curenta]:
-                    continue
+        # Trebuie sa mutam in spatiul gol placutele vecine pana ajungem la configuratia buna
+        # while configuratie.euristica() > 0:
+        poz_config = configuratie.pozitionare()
+        poz_loc_gol = poz_config[0]  # Pozitia goala din tabla
+        # Acum verificam care dintre vecini are euristica mai mica
+        # Trebuie sa tinem cont si de marginile matricii
+        i = poz_loc_gol[0]
+        j = poz_loc_gol[1]
 
-                # ultimul cub
-                cub_de_mutat = configuratie.stive[ind_stiva_curenta][-1]
+        # In locul gol vin placute din S, V , E sau N
+        aux1 = copy.deepcopy(configuratie)
+        aux2 = copy.deepcopy(configuratie)
+        aux3 = copy.deepcopy(configuratie)
+        aux4 = copy.deepcopy(configuratie)
+        # eur1 = float('inf')
+        if j - 1 >= 0:
+             # pozitia (i, j-1)
+            aux1.matrice[i][j -
+                            1], aux1.matrice[i][j] = aux1.matrice[i][j], aux1.matrice[i][j-1]
+            # eur1 = aux1.euristica()
 
-                stive_noi = []
-                for i in range(nr_stive):
-                    if i == ind_stiva_curenta:
-                        # Nu pune si cubul extras, cel de mutat
-                        stiva_noua = configuratie.stive[i][:-1]
-                    elif i == ind_stiva_destinatie:
-                        stiva_noua = configuratie.stive[i] + [cub_de_mutat]
-                    else:
-                        stiva_noua = configuratie.stive[i]
-                    stive_noi.append(stiva_noua)
+        # eur2 = float('inf')
+        if j + 1 <= n-1:
+            # pozitia (i, j+1)
+            aux2.matrice[i][j +
+                            1], aux2.matrice[i][j] = aux2.matrice[i][j], aux2.matrice[i][j+1]
+            # eur2 = aux2.euristica()
 
-                configuratie_noua = Configuratie(stive_noi)
+        # eur3 = float('inf')
+        if i-1 >= 0:
+            # pozitia (i-1, j)
+            aux3.matrice[i-1][j], aux3.matrice[i][j] = aux3.matrice[i][j], aux3.matrice[i-1][j]
+            # eur3 = aux3.euristica()
 
-                # Verificam daca nu am explorat deja aceasta configuratie
-                succesor = problema.cauta_nod_nume(configuratie_noua)
+        # eur4 = float('inf')
+        if i + 1 <= n-1:
+            # pozitia (i+1, j)
+            aux4.matrice[i+1][j], aux4.matrice[i][j] = aux4.matrice[i][j], aux4.matrice[i+1][j]
+            # eur4 = aux4.euristica()
 
-                if not succesor:  # Daca n-am mai explorat configuratia noua, o adaugam in arbore
-                    nod_nou = Nod(configuratie_noua)
-                    problema.noduri.append(nod_nou)
-                    succesor = nod_nou
+        # eur = min(eur1, eur2, eur3, eur4)
+        # configuratie_noua = None
 
-                cost = 1  # Toate mutarile au costul 1
-                succ.append((succesor, cost))
+        # if eur == eur1:
+        #     configuratie_noua = aux1
+        # elif eur == eur2:
+        #     configuratie_noua = aux2
+        # elif eur == eur3:
+        #     configuratie_noua = aux3
+        # elif eur == eur4:
+        #     configuratie_noua = aux4
 
+        list_aux = [aux1, aux2, aux3, aux4]
+
+        for configuratie_noua in list_aux:
+            # Verificam daca nu am ex
+            # plorat deja aceasta configuratie
+            succesor = problema.cauta_nod_nume(configuratie_noua)
+            if not succesor:  # Daca n-am mai explorat configuratia noua, o adaugam in arbore
+                nod_nou = Nod(configuratie_noua)
+                problema.noduri.append(nod_nou)
+                succesor = nod_nou
+
+            cost = 1  # Toate mutarile au costul 1
+            succ.append((succesor, cost))
         return succ
 
     def test_scop(self):
@@ -218,14 +258,14 @@ def in_lista(l, nod):
 
 def a_star():
     """
-            Functia care implementeaza algoritmul A-star
+        Functia care implementeaza algoritmul A-star
     """
-    # TO DO ... DONE
+
+    nod_curent = None
 
     rad_arbore = NodParcurgere(NodParcurgere.problema.nod_start)
     open = [rad_arbore]  # open va contine elemente de tip NodParcurgere
     closed = []  # closed va contine elemente de tip NodParcurgere
-    nod_nou = None
 
     while len(open) > 0:
         print(str_info_noduri(open))  # afisam lista open
@@ -241,7 +281,9 @@ def a_star():
             # "nod_curent" este tatal, "nod_succesor" este fiul curent
 
             # daca fiul nu e in drumul dintre radacina si tatal sau (adica nu se creeaza un circuit)
-            if (not nod_curent.contine_in_drum(nod_succesor)):
+            if not nod_curent.contine_in_drum(nod_succesor):
+
+                nod_nou = None
 
                 # calculez valorile g si f pentru "nod_succesor" (fiul)
                 # g-ul tatalui + cost muchie(tata, fiu)
@@ -253,11 +295,11 @@ def a_star():
                 nod_parcg_vechi = in_lista(closed, nod_succesor)
 
                 if nod_parcg_vechi is not None:  # "nod_succesor" e in closed
-                    # daca f-ul calculat pentru drumul actual este mai bun (mai mic) decat
-                    # 	   f-ul pentru drumul gasit anterior (f-ul nodului aflat in lista closed)
+                    # daca g-ul calculat pentru drumul actual este mai bun (mai mic) decat
+                    #        g-ul pentru drumul gasit anterior (g-ul nodului aflat in lista closed)
                     # atunci actualizez parintele, g si f
                     # si apoi voi adauga "nod_nou" in lista open
-                    if (f_succesor < nod_parcg_vechi.f):
+                    if g_succesor < nod_parcg_vechi.g:
                         # scot nodul din lista closed
                         closed.remove(nod_parcg_vechi)
                         nod_parcg_vechi.parinte = nod_curent  # actualizez parintele
@@ -271,16 +313,17 @@ def a_star():
 
                     if nod_parcg_vechi is not None:  # "nod_succesor" e in open
                         # daca f-ul calculat pentru drumul actual este mai bun (mai mic) decat
-                        # 	   f-ul pentru drumul gasit anterior (f-ul nodului aflat in lista open)
+                        #        f-ul pentru drumul gasit anterior (f-ul nodului aflat in lista open)
                         # atunci scot nodul din lista open
-                        # 		(pentru ca modificarea valorilor f si g imi va strica sortarea listei open)
+                        #         (pentru ca modificarea valorilor f si g imi va strica sortarea listei open)
                         # actualizez parintele, g si f
                         # si apoi voi adauga "nod_nou" in lista open (la noua pozitie corecta in sortare)
-                        open.remove(nod_parcg_vechi)
-                        nod_parcg_vechi.parinte = nod_curent
-                        nod_parcg_vechi.g = g_succesor
-                        nod_parcg_vechi.f = f_succesor
-                        nod_nou = nod_parcg_vechi
+                        if f_succesor < nod_parcg_vechi.f:
+                            open.remove(nod_parcg_vechi)
+                            nod_parcg_vechi.parinte = nod_curent
+                            nod_parcg_vechi.g = g_succesor
+                            nod_parcg_vechi.f = f_succesor
+                            nod_nou = nod_parcg_vechi
 
                     else:  # cand "nod_succesor" nu e nici in closed, nici in open
                         nod_nou = NodParcurgere(
@@ -309,12 +352,13 @@ def a_star():
 
 
 # Input
-nr_stive = 3
-nr_cuburi = 4
-cuburi = ['a', 'b', 'c', 'd']
-config_initiala = Configuratie([['a'], ['b', 'c'], ['d']])
-config_scop = Configuratie([['b', 'c'], [], ['d', 'a']])
+n = 3  # Matricea este de forma 3x3
+numere = [i for i in range(9)]  # 0 reprezinta spatiul gol
+config_initiala = Configuratie(
+    [[1, 8, 2], [0, 4, 3], [7, 6, 5]])
+config_scop = Configuratie([[1, 2, 3], [4, 5, 6], [7, 8, 0]])
 poz_scop = config_scop.pozitionare()
+
 
 if __name__ == "__main__":
     problema = Problema()
