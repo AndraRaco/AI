@@ -1,36 +1,21 @@
 # 232 Racovita Andra-Georgiana
 
-"Problema blocurilor"
+""" Problema canibalilor si misionarilor """
 
 
 class Configuratie:
-    def __init__(self, stive):
-        self.stive = stive
+    def __init__(self, lista):
+        self.lista = lista
 
     def __repr__(self):
-        return f"{self.stive}"
+        return f"{self.lista}"
 
     def __eq__(self, other):
-        return self.stive == other.stive
-
-    def pozitionare(self):
-        # Dictionar in care retinem (i,j), litera cub se afla pe stiva i pozitia j
-        poz = {}
-        for i, turn in enumerate(self.stive):
-            for j, cub in enumerate(turn):
-                poz[cub] = (i, j)
-        return poz
+        return self.lista == other.lista
 
     def euristica(self):
-        global poz_scop  # Dictionar cu configuratia la care trebuie sa ajungem
-        distanta = 0
-        poz = self.pozitionare()  # pozitiile cuburilor din configuratie
-
-        # Parcurgem cub-urile
-        for cub in cuburi:
-            if poz[cub] != poz_scop[cub]:
-                distanta += 1
-        return distanta
+        # (Canibali_est + Misionari_est) / locrui_in_barca
+        return (self.lista[1][0] + self.lista[1][1]) / M
 
 
 class Nod:
@@ -45,19 +30,11 @@ class Nod:
         return f"({self.info}, h={self.h})"
 
 
-class Arc:
-    def __init__(self, capat, varf):
-        self.capat = capat
-        self.varf = varf
-        self.cost = 1  # Toate mutarile au costul 1
-
-
 class Problema:
     def __init__(self):
-        self.noduri = [Nod(config_initiala)]
-        self.arce = []
-        self.nod_start = self.noduri[0]
-        self.nod_scop = config_scop
+        self.noduri = [Nod(configuratie_initiala)]
+        self.nod_start = Nod(configuratie_initiala)
+        self.nod_scop = Nod(configuratie_scop)
 
     def cauta_nod_nume(self, info):
         """Stiind doar informatia "info" a unui nod,
@@ -133,49 +110,29 @@ class NodParcurgere:
         sau lista vida, daca nu exista niciunul.
         (Fiecare tuplu contine un obiect de tip Nod si un numar.)
         """
-        # TO DO ... DONE
-        configuratie = self.nod_graf.info  # stiva de stive
         succ = []
-        for ind_stiva_curenta in range(nr_stive):
-            for ind_stiva_destinatie in range(nr_stive):
-                if ind_stiva_curenta == ind_stiva_destinatie:
-                    continue  # Nu mutam un cub pe aceeasi stiva
+        mal = self.nod_graf.info.lista[2]
+        info = self.nod_graf.info.lista
+        for m in range(min(info[mal][0], M) + 1):
 
-                # Daca e stiva vida, nu facem mutari, nu avem ce muta
-                if not configuratie.stive[ind_stiva_curenta]:
+            if m == 0:
+                c_max = M
+            else:
+                c_max = min(M - m, m, info[mal][1])
+            for c in range(c_max + 1):
+                if m + c == 0:
                     continue
-
-                # ultimul cub
-                cub_de_mutat = configuratie.stive[ind_stiva_curenta][-1]
-
-                stive_noi = []
-                for i in range(nr_stive):
-                    if i == ind_stiva_curenta:
-                        # Nu pune si cubul extras, cel de mutat
-                        stiva_noua = configuratie.stive[i][:-1]
-                    elif i == ind_stiva_destinatie:
-                        stiva_noua = configuratie.stive[i] + [cub_de_mutat]
-                    else:
-                        stiva_noua = configuratie.stive[i]
-                    stive_noi.append(stiva_noua)
-
-                configuratie_noua = Configuratie(stive_noi)
-
-                # Verificam daca nu am explorat deja aceasta configuratie
-                succesor = problema.cauta_nod_nume(configuratie_noua)
-
-                if not succesor:  # Daca n-am mai explorat configuratia noua, o adaugam in arbore
-                    nod_nou = Nod(configuratie_noua)
-                    problema.noduri.append(nod_nou)
-                    succesor = nod_nou
-
-                cost = 1  # Toate mutarile au costul 1
-                succ.append((succesor, cost))
-
+                succesor = [[], [], 1 - mal]
+                succesor[mal] = [info[mal][0] - m, info[mal][1] - c]
+                succesor[1 - mal] = [info[1 - mal]
+                                     [0] + m, info[1 - mal][1] + c]
+                if (succesor[0][0] >= succesor[0][1] >= 0 or succesor[0][0] == 0) and (succesor[1][0] >= succesor[1][1] >= 0 or succesor[1][0] == 0):
+                    configuratie = Configuratie(succesor)
+                    succ.append((Nod(configuratie), 1))
         return succ
 
     def test_scop(self):
-        return self.nod_graf.info == self.problema.nod_scop
+        return self.nod_graf.info == self.problema.nod_scop.info
 
     def __str__(self):
         parinte = self.parinte if self.parinte is None else self.parinte.nod_graf.info
@@ -313,12 +270,10 @@ def a_star():
 
 
 # Input
-nr_stive = 3
-nr_cuburi = 4
-cuburi = ['a', 'b', 'c', 'd']
-config_initiala = Configuratie([['a'], ['b', 'c'], ['d']])
-config_scop = Configuratie([['b', 'c'], [], ['d', 'a']])
-poz_scop = config_scop.pozitionare()
+N = 3  # numar de misionari sau canibali, in total 2N
+M = 2  # numar de locuri in barca
+configuratie_initiala = Configuratie([[0, 0], [3, 3], 1])
+configuratie_scop = Configuratie([[3, 3], [0, 0], 0])
 
 if __name__ == "__main__":
     problema = Problema()
