@@ -11,5 +11,4 @@
   In the missionaries and cannibals problem, N missionaries and N cannibals must cross a river using a boat which can carry at most M people, under the constraint that, for both banks, if there are missionaries present on the bank, they cannot be outnumbered by cannibals (if they were, the cannibals would eat the missionaries). The boat cannot cross the river by itself with no people on board. Links: [Problem requirement](https://drive.google.com/drive/folders/1-b8lHmrSZTDLMr80QjPv_2Iyhb6NL519), [Github](https://github.com/AndraRaco/AI/blob/master/Algoritmul%20A%20star/Problema%20canibalilor%20si%20misionarilor.py)
 
 ### 4. Search problem 
-  
-  
+  The students are placed in benches in the classroom. One of the students wants to send a written message to other student who is placed somewhere else in the class. Some benches are empty and some children are angry with each other. The message can be passed to the next column only through last two rows. Links: [Problem requirement(first problem)](https://drive.google.com/drive/folders/1-b8lHmrSZTDLMr80QjPv_2Iyhb6NL519), [Github](https://github.com/AndraRaco/AI/blob/master/Algoritmul%20A%20star/Problema%20de%20cautare%20(mesaj).py)
