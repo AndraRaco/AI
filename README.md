@@ -9,3 +9,7 @@
 
 ### 3. The Missionaries and Cannibals Problem
   In the missionaries and cannibals problem, N missionaries and N cannibals must cross a river using a boat which can carry at most M people, under the constraint that, for both banks, if there are missionaries present on the bank, they cannot be outnumbered by cannibals (if they were, the cannibals would eat the missionaries). The boat cannot cross the river by itself with no people on board. Links: [Problem requirement](https://drive.google.com/drive/folders/1-b8lHmrSZTDLMr80QjPv_2Iyhb6NL519), [Github](https://github.com/AndraRaco/AI/blob/master/Algoritmul%20A%20star/Problema%20canibalilor%20si%20misionarilor.py)
+
+### 4. Search problem 
+  
+  
