@@ -1,6 +1,7 @@
 # AI
 
 ## I. A* Algorithm
+
 ### 1. The Problem with Cubes
   We are given M cubes that are put in N stacks. We have the initial configuration and have to apply the A* algorithm to reach the Goal configuration. We can move only the cubes that are placed on top. Links: [Problem requirement](https://drive.google.com/drive/folders/1-b8lHmrSZTDLMr80QjPv_2Iyhb6NL519), [Github](https://github.com/AndraRaco/AI/blob/master/Algoritmul%20A%20star/Problema%20blocurilor.py)
   
@@ -14,6 +15,7 @@
   The students are placed in benches in the classroom. One of the students wants to send a written message to other student who is placed somewhere else in the class. Some benches are empty and some children are angry with each other. The message can be passed to the next column only through last two rows. Links: [Problem requirement(first problem)](https://drive.google.com/drive/folders/1-b8lHmrSZTDLMr80QjPv_2Iyhb6NL519), [Github](https://github.com/AndraRaco/AI/blob/master/Algoritmul%20A%20star/Problema%20de%20cautare%20(mesaj).py)
   
 ## II. Minimax Algorithm and Alpha-Beta pruning
+
 ### 1. Tic-Tac-Toe
   This is an implementation of a Tic-Tac-Toe solver using the Minimax Algorithm and also Alpha-Beta pruning to help the AI to make decisions. Link: [Github](https://github.com/AndraRaco/AI/blob/master/Algoritmul%20A%20star/X%20si%200.py).
 
