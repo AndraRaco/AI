@@ -17,5 +17,7 @@
 ## II. Minimax Algorithm and Alpha-Beta pruning
 
 ### 1. Tic-Tac-Toe
-  This is an implementation of a Tic-Tac-Toe solver using the Minimax Algorithm and also Alpha-Beta pruning to help the AI to make decisions. Link: [Github](https://github.com/AndraRaco/AI/blob/master/Algoritmul%20A%20star/X%20si%200.py).
+  This is an implementation of a Tic-Tac-Toe solver using the Minimax Algorithm and also Alpha-Beta pruning to help the AI to make decisions. Tic-tac-toe is a paper-and-pencil game for two players, X and O, who take turns marking the spaces in a 3×3 grid. The player who succeeds in placing three of their marks in a horizontal, vertical, or diagonal row is the winner. Links: [Problem requirement](https://drive.google.com/drive/folders/1_yPjMZjoC5ccjDDAHNqd42w9J_lUnEdP), [Github](https://github.com/AndraRaco/AI/blob/master/Algoritmul%20A%20star/X%20si%200.py).
 
+### 3. Connect 4
+  Connect Four is a two-player board game in which the players first choose a symbol (X or 0) and then take turns dropping one disc from the top into a seven-column, six-row vertically suspended grid. The pieces fall straight down, occupying the lowest available space within the column. The objective of the game is to be the first to form a horizontal, vertical, or diagonal line of four of one's own discs. Links: [Problem requirement](https://drive.google.com/drive/folders/1_yPjMZjoC5ccjDDAHNqd42w9J_lUnEdP), [Github](https://github.com/AndraRaco/AI/blob/master/Minimax%20Algorithm%20and%20Alpha-Beta%20pruning/Connect%204.py).
