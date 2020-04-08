@@ -1,3 +1,7 @@
+# Racovita Andra-Georgiana
+# Grupa 232
+# X si 0
+
 import time
 import copy
 
@@ -72,7 +76,8 @@ class Joc:
 
         return l_mutari
 
-    # linie deschisa inseamna linie pe care jucatorul mai poate forma o configuratie castigatoare
+    # linie deschisa inseamna linie pe care jucatorul mai poate
+    # forma o configuratie castigatoare
     def linie_deschisa(self, lista, jucator):
         """
         # rezolvare alternativa:

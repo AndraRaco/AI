@@ -1,3 +1,7 @@
+# Racovita Andra-Georgiana
+# Grupa 232
+# Connect 4
+
 import time
 import copy
 
@@ -9,21 +13,16 @@ class Joc:
     NR_COLOANE = 7
     NR_LINII = 6
     NR_CONNECT = 4  # cu cate simboluri adiacente se castiga
-    SIMBOLURI_JUC = ['X', '0']  # ['G', 'R'] sau ['X', '0']
-    JMIN = None  # 'R'
-    JMAX = None  # 'G'
+    SIMBOLURI_JUC = ['X', '0']
+    JMIN = None
+    JMAX = None
     GOL = '.'
 
     def __init__(self, tabla=None, ultim_poz=None):
-        # self.matr = tabla or [Joc.GOL]*(Joc.NR_COLOANE * Joc.NR_LINII)
-
         self.matr = tabla or [[self.GOL for j in range(
             self.NR_COLOANE)] for i in range(self.NR_LINII)]
         # lista cu ultimile pozitii ocupate pe ficare coloana
         self.ultim_poz = ultim_poz or ([self.NR_LINII-1] * self.NR_COLOANE)
-
-    # def __str__(self):
-    #     return '\n'.join([' | '.join([str(u) for u in row]) for row in self.matr])
 
     def final(self):
         # returnam simbolul jucatorului castigator daca are 4 piese adiacente
@@ -88,7 +87,6 @@ class Joc:
     def mutari(self, jucator_opus):
         l_mutari = []
 
-        # TO DO..........
         # folosim:
         # matr_tabla_noua = list(self.matr)
         # .... "jucator_opus" (parametrul functiei) adauga o mutare in "matr_tabla_noua"
@@ -161,8 +159,6 @@ class Joc:
         return rez
 
     def fct_euristica(self):
-        # TO DO: alte variante de euristici? .....
-
         # intervale_deschisa(juc) = cate intervale de 4 pozitii
         # (pe linii, coloane, diagonale) nu contin juc_opus
         return self.nr_intervale_deschise(Joc.JMAX) - self.nr_intervale_deschise(Joc.JMIN)
@@ -308,10 +304,6 @@ def alpha_beta(alpha, beta, stare):
 
 
 def afis_daca_final(stare_curenta):
-    # ?? TO DO:
-    # de adagat parametru "pozitie", ca sa nu verifice mereu toata tabla,
-    # ci doar linia, coloana, 2 diagonale pt elementul nou, de pe "pozitie"
-
     final = stare_curenta.tabla_joc.final()
     if(final):
         if (final == "remiza"):
@@ -441,18 +433,3 @@ def main():
 if __name__ == "__main__":
 
     main()
-
-    # joc = [
-    #     ['.', '.', '.', '0', '.', '.', '.'],
-    #     ['.', 'X', '.', '0', '.', '.', '.'],
-    #     ['.', 'X', 'X', '0', '.', '.', '.'],
-    #     ['.', '0', '0', 'X', '.', '.', '.'],
-    #     ['.', 'X', 'X', '0', 'X', '.', '.'],
-    #     ['0', 'X', 'X', 'X', '0', '.', '0'],
-    # ]
-    # ultim_poz = [4, 0, 1, -1, 3, 5, 4]
-    # joc = Joc(joc, ultim_poz)
-    # joc.JMAX = '0'
-    # joc.JMIN = 'X'
-    # final = joc.final()
-    # print(final)
