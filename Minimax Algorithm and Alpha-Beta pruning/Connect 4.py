@@ -13,7 +13,7 @@ class Joc:
     NR_COLOANE = 7
     NR_LINII = 6
     NR_CONNECT = 4  # cu cate simboluri adiacente se castiga
-    SIMBOLURI_JUC = ['X', '0']
+    SIMBOLURI_JOC = ['X', '0']
     JMIN = None
     JMAX = None
     GOL = '.'
@@ -338,12 +338,12 @@ def main():
             print("Trebuie sa introduceti un numar natural nenul.")
 
     # initializare jucatori
-    [s1, s2] = Joc.SIMBOLURI_JUC.copy()  # lista de simboluri posibile
+    [s1, s2] = Joc.SIMBOLURI_JOC.copy()  # lista de simboluri posibile
     raspuns_valid = False
     while not raspuns_valid:
         Joc.JMIN = str(
             input("Doriti sa jucati cu {} sau cu {}? ".format(s1, s2))).upper()
-        if (Joc.JMIN in Joc.SIMBOLURI_JUC):
+        if (Joc.JMIN in Joc.SIMBOLURI_JOC):
             raspuns_valid = True
         else:
             print("Raspunsul trebuie sa fie {} sau {}.".format(s1, s2))
@@ -356,7 +356,7 @@ def main():
 
     # creare stare initiala
     stare_curenta = Stare(
-        tabla_curenta, Joc.SIMBOLURI_JUC[0], Stare.ADANCIME_MAX)
+        tabla_curenta, Joc.SIMBOLURI_JOC[0], Stare.ADANCIME_MAX)
 
     linie = -1
     coloana = -1
