@@ -69,7 +69,7 @@ class Configuratie:
         # Distanta Manhattan: abs(x1- x2) + abs(y1 – y2)
         if (poz_bilet[2] == poz_primire[2]):  # sunt pe aceeasi coloana
 
-            if(poz_bilet[0] == poz_primire[0]):  # daca sunt in stanga in banca
+            if(poz_bilet[0] == poz_primire[0]):  # daca sunt in stanga/dreapta in banca
                 return abs(poz_bilet[1] - poz_primire[1]) + abs(poz_bilet[2] - poz_primire[2])
             else:  # unul sta in stang si unul sta in dreapta
                 return abs(poz_bilet[1] - poz_primire[1]) + abs(poz_bilet[2] - poz_primire[2]) + 1
@@ -143,8 +143,9 @@ class Configuratie:
                     return math.sqrt((dif_pozD_penultima_banca + dif_pozB_penultima_banca) ** 2 + 4 ** 2)
 
     def euristica3(self):
-        """Euristica 3 nu este o euristica admisibila, deoarece suma a mai multor euristici admisibile nu este o euristica admisibila
-        si am obligat algoritmul sa treaca pe coloana urmatoare doar pe la ultima banca.
+        """Euristica 3 nu este o euristica admisibila, deoarece suma a mai multor euristici admisibile ridicata la puterea 10 
+        nu este o euristica admisibila, fiindca supraestimeaza valoarea pe ultimul rand.
+        In plus, am obligat algoritmul sa treaca pe coloana urmatoare doar pe la ultima banca.
         Euristica este incosistenta, deoarce cand pozitia biletului este pe ultimul sau penultimul rand 
         returnam o valoare care nu respecta monotonia."""
         global poz_primire  # Pozitia elevului care trebuie sa primeasca biletul
@@ -276,7 +277,9 @@ class NodParcurgere:
         # Schimbatul cu ultima/ penultima banca
 
         # Verificam daca poate sa ii dea colegului de banca, daca nu sunt suparati sau e loc liber
+        # Dam biletul in stanga sau in dreapta
         if poz_bilet[0] == 0:  # e in st
+            # tuplu cu cei 2 colegi de banca
             banca = matrice_clasa[poz_bilet[1]][poz_bilet[2]]
             if banca[1] != "liber":
                 # Daca nu sunt suparati
@@ -284,7 +287,8 @@ class NodParcurgere:
                     conf_noua = Configuratie((1, poz_bilet[1], poz_bilet[2]))
                     succ.append((Nod(conf_noua), 1))
 
-            # Schimbam randul si noi suntem in st
+            # Schimbam randul si noi suntem in st, deci putem merge doar in stanga
+            # Nu putem fi pe prima coloana, pt ca nu se poate schimba din st
             if (poz_bilet[1] == m - 2 or poz_bilet[1] == m - 1) and poz_bilet[2] != 0:
                 # Banca pe care urmeaza sa ne mutam
                 # cu o coloana mai in stanga
@@ -318,14 +322,16 @@ class NodParcurgere:
         # Verificam daca putem da la ala din fata sau spate
         if poz_bilet[1] - 1 >= 0:  # in jos
             if matrice_clasa[poz_bilet[1] - 1][poz_bilet[2]][poz_bilet[0]] != "liber":
-                conf_noua = Configuratie(
-                    (poz_bilet[0], poz_bilet[1] - 1, poz_bilet[2]))
-                succ.append((Nod(conf_noua), 1))
+                if not ((matrice_clasa[poz_bilet[1] - 1][poz_bilet[2]][poz_bilet[0]], matrice_clasa[poz_bilet[1]][poz_bilet[2]][poz_bilet[0]]) in suparati):
+                    conf_noua = Configuratie(
+                        (poz_bilet[0], poz_bilet[1] - 1, poz_bilet[2]))
+                    succ.append((Nod(conf_noua), 1))
         if poz_bilet[1] + 1 < m:  # in sus
             if matrice_clasa[poz_bilet[1] + 1][poz_bilet[2]][poz_bilet[0]] != "liber":
-                conf_noua = Configuratie(
-                    (poz_bilet[0], poz_bilet[1]+1, poz_bilet[2]))
-                succ.append((Nod(conf_noua), 1))
+                if not ((matrice_clasa[poz_bilet[1] + 1][poz_bilet[2]][poz_bilet[0]], matrice_clasa[poz_bilet[1]][poz_bilet[2]][poz_bilet[0]]) in suparati):
+                    conf_noua = Configuratie(
+                        (poz_bilet[0], poz_bilet[1]+1, poz_bilet[2]))
+                    succ.append((Nod(conf_noua), 1))
         return succ
 
     def test_scop(self):  # testez daca nodul extras din lista open este nod scop
@@ -384,6 +390,7 @@ def str_info_noduri(l):
             sir += matrice_clasa[i][j][0] + " "
         else:
             sir += matrice_clasa[i][j][1] + " "
+
     return sir
 
 
@@ -576,6 +583,16 @@ if __name__ == "__main__":
 
     # Repetam primim un raspuns valid
     raspuns_valid = False
+    list_input = ["232_Racovita_Andra_Georgiana_Lab6_Pb4_input_1.txt",
+                  "232_Racovita_Andra_Georgiana_Lab6_Pb4_input_2.txt",
+                  "232_Racovita_Andra_Georgiana_Lab6_Pb4_input_3.txt",
+                  "232_Racovita_Andra_Georgiana_Lab6_Pb4_input_4.txt"]
+    list_output = ["232_Racovita_Andra_Georgiana_Lab6_Pb4_output_1.txt",
+                   "232_Racovita_Andra_Georgiana_Lab6_Pb4_output_2.txt",
+                   "232_Racovita_Andra_Georgiana_Lab6_Pb4_output_3.txt",
+                   "232_Racovita_Andra_Georgiana_Lab6_Pb4_output_4.txt"]
+
+    # Intrebare varianta de input dorita de rulare
     while not raspuns_valid:
         global nume_fisier_input
         tip_algoritm = input(
@@ -583,22 +600,21 @@ if __name__ == "__main__":
         if tip_algoritm in ['1', '2', '3', '4']:
             raspuns_valid = True
             if tip_algoritm == '1':
-                nume_fisier_input = "input1.txt"
-                fisier_output = "output1.txt"
+                nume_fisier_input = list_input[0]
+                fisier_output = list_output[0]
             elif tip_algoritm == '2':
-                nume_fisier_input = "input2.txt"
-                fisier_output = "output2.txt"
-            elif tip_algoritm == '3':
-                nume_fisier_input = "input3.txt"
-                fisier_output = "output3.txt"
+                nume_fisier_input = list_input[1]
+                fisier_output = list_output[1]
+            elif tip_algoritm == '3':  # La euristica 3 nu da drum minim
+                nume_fisier_input = list_input[2]
+                fisier_output = list_output[2]
             elif tip_algoritm == '4':
-                nume_fisier_input = "input4.txt"
-                fisier_output = "output4.txt"
+                nume_fisier_input = list_input[3]
+                fisier_output = list_output[3]
         else:
             print("Nu ati ales o varianta corecta.")
 
     # Apelam Algoritmul A* pentru toate euristicile
-
     # Citire input
     citire_input()
 
@@ -613,7 +629,7 @@ if __name__ == "__main__":
     f = open(fisier_output, "w")
 
     # Pentru fiecare euristica apelam Algoritmul A*
-    f.write("\n------------------ Concluzie -----------------------\n")
+    f.write("------------------ Concluzie -----------------------\n")
 
     # Algoritmul A* pentru euristica 1
     numar_euristica = 1

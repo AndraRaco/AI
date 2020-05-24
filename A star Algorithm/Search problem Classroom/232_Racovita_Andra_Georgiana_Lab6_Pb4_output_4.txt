@@ -1,0 +1,10 @@
+------------------ Concluzie -----------------------
+Drum de cost minim: ionel > alina v diana v costin v simona v razvan v andrei >> oana ^ radu > patricia v victor >> andra ^ gigel ^ tamara ^ dora > dragos 
+Calculatorul a "gandit" timp de 1 milisecunde.
+
+Drum de cost minim: ionel > alina v diana v costin v simona v razvan v andrei >> oana ^ radu > patricia v victor >> andra ^ gigel ^ tamara ^ dora > dragos 
+Calculatorul a "gandit" timp de 0 milisecunde.
+
+Drum de cost minim: ionel > alina v diana v costin v simona v razvan v andrei >> oana ^ radu > patricia v victor >> andra ^ gigel ^ tamara ^ dora > dragos 
+Calculatorul a "gandit" timp de 0 milisecunde.
+

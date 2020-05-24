@@ -1,11 +1,10 @@
-
 ------------------ Concluzie -----------------------
 Drum de cost minim: ionel >> oana > maia >> dragos 
-Calculatorul a "gandit" timp de 3 milisecunde.
+Calculatorul a "gandit" timp de 1 milisecunde.
 
 Drum de cost minim: ionel >> oana > maia >> dragos 
 Calculatorul a "gandit" timp de 1 milisecunde.
 
 Drum de cost minim: ionel v adrian >> andra > cora >> albert ^ dragos 
-Calculatorul a "gandit" timp de 2 milisecunde.
+Calculatorul a "gandit" timp de 1 milisecunde.
 

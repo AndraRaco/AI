@@ -1,14 +1,18 @@
-# Racovita Andra-Georgiana
-# Grupa 232
 # Dame
 
 import time
 import copy
 
+import sys
+
 
 def move(matrice, pozitie, d, jucator):
-    # facem mutarea si scotem piesele
+    # pozitia = pozitia noua
+    # d[0] - element din vectorul de directii
+    # d[1] - pozitia veche
+    # facem mutarea si scotem piesele pe care le sarim
 
+    # Transormam toate piesele pe care le gasim in drumul nostru de la pozitia noua la pozitia veche in loc gol ("#")
     i_nou, j_nou = pozitie[0], pozitie[1]
     i_nou -= d[0][0]
     j_nou -= d[0][1]  # Mergem spre pozitia veche
@@ -16,6 +20,7 @@ def move(matrice, pozitie, d, jucator):
     j_vechi = d[1][1]
     matrice[i_vechi][j_vechi] = Joc.GOL
     while i_nou != i_vechi and j_vechi != j_nou:
+        # Transformam semnele de pe drum in loc gol, "#"
         matrice[i_nou][j_nou] = Joc.GOL
         i_nou -= d[0][0]
         j_nou -= d[0][1]
@@ -42,7 +47,7 @@ class Joc:
     JMAX = None
     GOL = '#'
 
-    def __init__(self, tabla=None):
+    def __init__(self, tabla=None):  # Initializare
         if tabla is not None:
             self.matr = tabla  # matrice
         else:
@@ -57,16 +62,16 @@ class Joc:
                         self.matr[i][j] = self.SIMBOLURI_JOC[0]
 
     def final(self, jucator):
-        # returnam simbolul jucatorului castigator daca nu mai exista mutari posibile (
+        # returnam simbolul jucatorului castigator daca nu mai exista mutari posibile
         # sau returnam 'remiza'
         # sau 'False' daca nu s-a terminat jocul
 
-        pos = self.posibilitati(jucator)  # Daca mai sunt mutari posibile
-        if len(pos) == 0:
+        pos = self.posibilitati(jucator)
+        if len(pos) == 0:  # Daca nu mai sunt mutari posibile
+            # Scorul este numarul de piese negre - numarul de piese albe
             scor_jmin = self.nr_piese(self.JMIN)
-            scor_jmin += self.nr_piese(self.JMIN.upper())
             scor_jmax = self.nr_piese(self.JMAX)
-            scor_jmax += self.nr_piese(self.JMAX.upper())
+            self.print_scor()
             if scor_jmin == 0:  # returnam simbolul castigator, jucatoru care inca mai are piese
                 return self.JMAX
             elif scor_jmax == scor_jmin:
@@ -77,7 +82,7 @@ class Joc:
 
     def posibilitati(self, jucator):
         # returneaza un dictionar: cheile sunt pozitiile in care se pot pune piese
-        #                          pozitiile in ca
+        #                          (directie, pozitie veche)
         pos = {}
         # Jucator opus
         if jucator == self.SIMBOLURI_JOC[0] or jucator == self.SIMBOLURI_JOC[0].upper():
@@ -109,12 +114,12 @@ class Joc:
 
                         # Daca e piesa alba, atunci poate sa mearga doar in jos pe diagonala
                         # jucator nu e rege
-                        if self.matr[i][j] == self.SIMBOLURI_JOC[0]:
+                        if self.matr[i][j] == self.SIMBOLURI_JOC[0]:  # n
                             directii = [(-1, -1), (-1, 1)]
 
                         # Daca e piesa neagra, atunci poate sa mearga doar in sus pe diagonala
                         # jucator nu e rege
-                        if self.matr[i][j] == self.SIMBOLURI_JOC[1]:
+                        if self.matr[i][j] == self.SIMBOLURI_JOC[1]:  # a
                             directii = [(1, -1), (1, 1)]
 
                         for directie in directii:
@@ -139,6 +144,8 @@ class Joc:
                                 if i_nou in range(self.NR_LINII) and j_nou in range(self.NR_COLOANE) and \
                                         i_gol in range(self.NR_LINII) and j_gol in range(self.NR_COLOANE) \
                                         and self.matr[i_nou][j_nou].upper() == jucator_opus.upper() and self.matr[i_gol][j_gol] == self.GOL:
+
+                                    # trebuie sa avem perechi piesa jucator opus + loc gol
                                     while self.matr[i_nou][j_nou].upper() == jucator_opus.upper() and self.matr[i_gol][j_gol] == self.GOL:
                                         # Mergem din 2 in 2 cu piesa opusa
                                         i_final = i_gol
@@ -153,7 +160,7 @@ class Joc:
                                 else:
                                     gasit = False
 
-                            if ok == 1:
+                            if ok == 1:  # Pozitiile noi sunt cele care au ramas in i/j_final
                                 i_nou = i_final
                                 j_nou = j_final
 
@@ -162,31 +169,80 @@ class Joc:
                                     pos[(i_nou, j_nou)] = [(directie, (i, j))]
                                 else:
                                     pos[(i_nou, j_nou)].append(
-                                        (directie, (i, j)))
+                                        (directie, (i, j)))  # o piesa poate avea mai multe mutari disponibile
         return pos
 
     def mutari(self, jucator):
         l_mutari = []  # Mutarile urmatoare, tabla de joc copiata si adaugata noua mutare
 
-        posibilitati = self.posibilitati(jucator)
+        posibilitati = self.posibilitati(jucator)  # Mutarile posibile
         for pozitie, dirs in posibilitati.items():
             for d in dirs:
-                matr_noua = copy.deepcopy(self.matr)
+                matr_noua = copy.deepcopy(self.matr)  # Copiem matricea curenta
+                # ce tip de piesa este la pozitie d[1](pozitia veche)
                 jucator_tip = matr_noua[d[1][0]][d[1][1]]
-                move(matr_noua, pozitie, d, jucator_tip)
-                l_mutari.append(Joc(matr_noua))
+                move(matr_noua, pozitie, d, jucator_tip)  # Facem mutarea
+                l_mutari.append(Joc(matr_noua))  # Adaugam noua tabla in lista
         return l_mutari
 
-    def nr_piese(self, jucator):
+    def nr_piese(self, jucator):  # Calculam numarul de piese a unui jucator
         nr = 0
         for line in self.matr:
             nr += line.count(jucator)
+            nr += line.count(jucator.upper())
         return nr
 
-    def fct_euristica(self):
-        return self.nr_piese(Joc.JMAX)+self.nr_piese(Joc.JMAX.upper()) - self.nr_piese(Joc.JMIN) - self.nr_piese(Joc.JMIN.upper())
+    # Calculam valoarea pieselor unui jucator pentru euristica
+    def nr_piese_euristica(self, jucator):
+        # pion=1, rege=2
+        nr = 0
+        for line in self.matr:
+            nr += line.count(jucator)
+            nr += line.count(jucator.upper())*2  # Regii au valoare dubla
+        return nr
 
-    def estimeaza_scor(self, adancime, jucator):
+    # Calculam valoarea pieselor unui jucator pentru euristica, in functie de pozitia piesei pe tabla
+    def val_piese(self, jucator):
+        val = 0
+        index = 0
+        if jucator == 'n':
+            for line in self.matr:
+                # (valoare_pion + numarul_liniei) * cati pioni sunt pe linie
+                val += (5 + index) * line.count(jucator)
+                # (valoare_rege + numarul_liniei) * cati pioni sunt pe linie
+                val += (10 + index) * line.count(jucator.upper())
+                index += 1
+        else:
+            for line in self.matr: # a
+                # (valoare_pion + NR_LINII - numarul_liniei) * cati pioni sunt pe linie
+                val += (5 + self.NR_LINII - index) * line.count(jucator)
+                # (valoare_rege + NR_LINII - numarul_liniei) * cati pioni sunt pe linie
+                val += (10 + self.NR_LINII - index) * line.count(jucator.upper())
+                index += 1
+        return val
+
+    def print_scor(self):  # Afisare scor
+        puncte_jmin = self.nr_piese(Joc.JMIN)  # Numar piese calculator
+        puncte_jmax = self.nr_piese(Joc.JMAX)  # Numar piese calculator
+        if Joc.JMIN == 'n':
+            print(f"Scorul este:  negru: {puncte_jmin}, alb: {puncte_jmax}\n")
+        else:
+            print(f"Scorul este:  negru: {puncte_jmax}, alb: {puncte_jmin}\n")
+
+    def fct_euristica1(self):
+        # Numar piese calculator - Numar piese jucator, indiferent de pozitiile pieselor pe tabla
+        # Valori piese Rege=2, Pion=1, deoarce regele are mai multa putere putand merge si inapoi
+        return self.nr_piese_euristica(Joc.JMAX) - self.nr_piese_euristica(Joc.JMIN)
+
+    def fct_euristica2(self):
+        # Numar piese calculator - Numar piese jucator cu valorile lor
+        # Vom lua in considerarea pe ce rand este fiecare pion, deoarce cu cat este mai aproape de marginea tablei jucatorului opus
+        # are mai multe sanse sa devina rege si sa fie o piesa mai puternica
+        # Valoarea unui pion va fi 5 + randul pe care se afla
+        # Valoarea unui rege va fi 10 + randul pe care se afla
+        return self.val_piese(Joc.JMAX) - self.val_piese(Joc.JMIN.upper())
+
+    def estimeaza_scor(self, adancime, jucator):  # Estimeaza scorul
         t_final = self.final(jucator)
         if t_final == Joc.JMAX:
             return 999 + adancime
@@ -195,7 +251,7 @@ class Joc:
         elif t_final == 'remiza':
             return 0
         else:
-            return self.fct_euristica()
+            return self.fct_euristica1()
 
     def __str__(self):
         sir = '  '
@@ -236,19 +292,19 @@ class Stare:
         # cea mai buna mutare din lista de mutari posibile pentru jucatorul curent
         self.stare_aleasa = None
 
-    def jucator_opus(self):
+    def jucator_opus(self):  # Jucatorul opus
         if self.j_curent == Joc.JMIN:
             return Joc.JMAX
         else:
             return Joc.JMIN
 
     def mutari(self):
-        l_mutari = self.tabla_joc.mutari(self.j_curent)
-        juc_opus = self.jucator_opus()
+        l_mutari = self.tabla_joc.mutari(self.j_curent)  # Lista cu mutarile
+        juc_opus = self.jucator_opus()  # Jucatorul opus
         l_stari_mutari = [
             Stare(mutare, juc_opus, self.adancime - 1, parinte=self) for mutare in l_mutari]
 
-        return l_stari_mutari
+        return l_stari_mutari  # intoarcem lista cu noile stari
 
     def __str__(self):
         sir = str(self.tabla_joc) + "(Juc curent: " + self.j_curent + ")\n"
@@ -327,7 +383,7 @@ def alpha_beta(alpha, beta, stare):
     return stare
 
 
-def afis_daca_final(stare_curenta, jucator):
+def afis_daca_final(stare_curenta, jucator):  # Afisam daca am terminat jocul
     final = stare_curenta.tabla_joc.final(jucator)
     if final:
         if final == "remiza":
@@ -341,6 +397,13 @@ def afis_daca_final(stare_curenta, jucator):
 
 
 def main():
+    # preiau timpul in milisecunde de la inceputul jocului
+    t_iceputul_jocului = int(round(time.time() * 1000))
+
+    # Numar total de mutari
+    numar_mutari_JMAX = 0  # calculator
+    numar_mutari_JMIN = 0  # jucator
+
     # initializare algoritm
     raspuns_valid = False
     while not raspuns_valid:
@@ -354,12 +417,20 @@ def main():
     # initializare ADANCIME_MAX
     raspuns_valid = False
     while not raspuns_valid:
-        n = input("Adancime maxima a arborelui: ")
+        n = input(
+            "Alege dificultatea jocului(1, 2 sau 3):\n1. Usor\n2. Mediu\n3. Dificil\n")
         if n.isdigit():
-            Stare.ADANCIME_MAX = int(n)
-            raspuns_valid = True
+            if n == '1':
+                Stare.ADANCIME_MAX = 2
+                raspuns_valid = True
+            if n == '2':
+                Stare.ADANCIME_MAX = 3
+                raspuns_valid = True
+            if n == '3':
+                Stare.ADANCIME_MAX = 4
+                raspuns_valid = True
         else:
-            print("Trebuie sa introduceti un numar natural nenul.")
+            print("Trebuie sa introduceti un numar natural nenul intre 1 si 3.")
 
     # initializare jucatori
     [s1, s2] = Joc.SIMBOLURI_JOC.copy()  # lista de simboluri posibile
@@ -394,10 +465,24 @@ def main():
                 break
 
             # muta jucatorul
+            # preiau timpul in milisecunde de dinainte de mutare
+            t_inainte = int(round(time.time() * 1000))
             raspuns_valid = False
             while not raspuns_valid:
                 try:
-                    pos = stare_curenta.tabla_joc.posibilitati(Joc.JMIN)
+                    rasp_valid = False
+                    while not rasp_valid:
+                        print("Alege 1 sau 2:\n 1. Continua jocul\n 2. Exit\n")
+                        raspuns = input("Raspunsul: ")
+                        if raspuns == '1':
+                            rasp_valid = True
+                        if raspuns == '2':
+                            stare_curenta.tabla_joc.print_scor()
+                            rasp_valid = True
+                            sys.exit(0)
+
+                    pos = stare_curenta.tabla_joc.posibilitati(
+                        tabla_curenta.JMIN)
                     print("Pozitii posibile: ")
                     for key, values in pos.items():
                         for value in values:
@@ -433,8 +518,9 @@ def main():
             # dupa iesirea din while sigur am valida coloana
             # deci pot plasa simbolul pe "tabla de joc"
             poz_veche = (linie_veche, coloana_veche)
+            numar_mutari_JMIN += 1  # facem o mutare
 
-            i = 0
+            i = 0  # Luam in dirs directiile pe care le-a folosit alg sa ajunga la poz noua
             dirs = pos[(linie, coloana)][0]
             while pos[(linie, coloana)][i][1] != poz_veche:
                 i += 1
@@ -451,6 +537,14 @@ def main():
             print("\nTabla dupa mutarea jucatorului")
             print(str(stare_curenta))
 
+            # Scor
+            stare_curenta.tabla_joc.print_scor()
+
+            # preiau timpul in milisecunde de dupa mutare
+            t_dupa = int(round(time.time() * 1000))
+            print("Calculatorul a \"gandit\" timp de " +
+                  str(t_dupa - t_inainte) + " milisecunde.")
+
             # S-a realizat o mutare. Schimb jucatorul cu cel opus
             stare_curenta.j_curent = stare_curenta.jucator_opus()
 
@@ -459,6 +553,8 @@ def main():
 
             if afis_daca_final(stare_curenta, Joc.JMAX):
                 break
+
+            numar_mutari_JMAX += 1  # facem o mutare
 
             # preiau timpul in milisecunde de dinainte de mutare
             t_inainte = int(round(time.time() * 1000))
@@ -470,6 +566,9 @@ def main():
             print("Tabla dupa mutarea calculatorului")
             print(str(stare_curenta))
 
+            # Scor
+            stare_curenta.tabla_joc.print_scor()
+
             # preiau timpul in milisecunde de dupa mutare
             t_dupa = int(round(time.time() * 1000))
             print("Calculatorul a \"gandit\" timp de " +
@@ -477,6 +576,19 @@ def main():
 
             # S-a realizat o mutare. Schimb jucatorul cu cel opus
             stare_curenta.j_curent = stare_curenta.jucator_opus()
+
+    # Afisam numarul de mutari
+    if Joc.JMAX == Joc.SIMBOLURI_JOC[0]:
+        print(
+            f"Numar mutari joc: pentru {Joc.SIMBOLURI_JOC[0]} = {numar_mutari_JMAX}, iar pentru {Joc.SIMBOLURI_JOC[1]} = {numar_mutari_JMIN}")
+    else:
+        print(
+            f"Numar mutari joc: pentru {Joc.SIMBOLURI_JOC[0]} = {numar_mutari_JMIN}, iar pentru {Joc.SIMBOLURI_JOC[1]} = {numar_mutari_JMAX}")
+
+    # preiau timpul in milisecunde de dupa joc
+    t_dupa_joc = int(round(time.time() * 1000))
+    print("Jocul a durat " +
+          str(t_dupa_joc - t_iceputul_jocului) + " milisecunde.")
 
 
 if __name__ == "__main__":
